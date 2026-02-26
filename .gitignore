@@ -1,0 +1,11 @@
+# 忽略编译文件夹
+build/
+debug/
+obj/
+
+# 忽略特定后缀
+*.o
+*.elf
+*.bin
+*.hex
+*.map
