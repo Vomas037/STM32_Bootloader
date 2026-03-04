@@ -3,18 +3,18 @@
         {
             "name": "bootloader_bootloader",
             "includePath": [
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Core\\Inc",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Drivers\\STM32F1xx_HAL_Driver\\Inc",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Drivers\\STM32F1xx_HAL_Driver\\Inc\\Legacy",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Drivers\\CMSIS\\Device\\ST\\STM32F1xx\\Include",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Drivers\\CMSIS\\Include",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\MDK-ARM\\inferface",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\MDK-ARM\\application",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Core\\Inc",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Drivers\\STM32F1xx_HAL_Driver\\Inc",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Drivers\\STM32F1xx_HAL_Driver\\Inc\\Legacy",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Drivers\\CMSIS\\Device\\ST\\STM32F1xx\\Include",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Drivers\\CMSIS\\Include",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\MDK-ARM\\inferface",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\MDK-ARM\\application",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include",
                 "C:\\Keil_v5\\ARM\\ARMCC\\include\\rw",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\MDK-ARM",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Core\\Src",
-                "e:\\STM32_Project\\Bootloader\\bootloader\\Drivers\\STM32F1xx_HAL_Driver\\Src",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\MDK-ARM",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Core\\Src",
+                "e:\\STM32_Project\\Bootloader\\bootloader_demo\\Drivers\\STM32F1xx_HAL_Driver\\Src",
                 "${default}"
             ],
             "defines": [
