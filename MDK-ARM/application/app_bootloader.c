@@ -1,39 +1,31 @@
 #include "app_bootloader.h"
 #include "stdlib.h"
 
-typedef enum
-{
-    BOOTLOADER_STATUS_INIT,
-    BOOTLOADER_STATUS_START,
-    BOOTLOADER_STATUS_RUN,
-    BOOTLOADER_STATUS_RX_DATA,
-    BOOTLOADER_STATUS_CHECK_DATA,
-    BOOTLOADER_STATUS_JUMP_APP
-} Bootloader_status;
-
-//预计接收
+// 预计接收
 uint8_t app_rx_start_buff[APP_START_RX_BUFF_LEN] = {0};
 uint16_t app_rx_start_len = 0;
 
-//确认接收完毕标志
+// 确认接收完毕标志
 uint8_t rx_done_flag = 0;
 
-//总的接收的长度
+// 总的接收的长度
 uint32_t app_rx_total_len = 0;
 
-//当前状态
-Bootloader_status boot_status = BOOTLOADER_STATUS_INIT;
+// 当前状态
+Bootloader_Status boot_status = BOOTLOADER_STATUS_INIT;
+
+// 更新状态
+Bootloader_Update_Status boot_update_status = BOOTLOADER_NO_UPDATE;
 
 /*按键中断回调函数*/
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    if(GPIO_Pin == KEY1_Pin)
+    if (GPIO_Pin == KEY1_Pin)
     {
-        rx_done_flag = 1;
+        boot_update_status = BOOTLOADER_RESET;
+        // printf("reset..\r\n");
     }
 }
-
-
 
 /**
  * 初始化打印日志
@@ -78,24 +70,20 @@ void App_bootloader_start(void)
 // 接收数据
 void App_bootloader_rx_data(void)
 {
-    //1.软件方式：等待两秒钟
-    // if((HAL_GetTick() - last_rx_time > 2000) && (rx_flag == 1))
-    // {
-    //     boot_status = BOOTLOADER_STATUS_CHECK_DATA;
-    //     rx_flag = 0;
-    //     printf("receive data ok\r\n");
-    // }
-    //2.硬件方式
-    if(rx_done_flag){
+    // 1.软件方式：等待两秒钟
+    if ((HAL_GetTick() - last_rx_time > 2000) && (rx_flag == 1))
+    {
         boot_status = BOOTLOADER_STATUS_CHECK_DATA;
+        rx_flag = 0;
         printf("receive data ok\r\n");
     }
+    // 2.硬件方式 外部按键中断
 }
 
 // 传输完成校验
 void App_bootloader_check_data(void)
 {
-    if(app_rx_total_len == total_len)
+    if (app_rx_total_len == total_len)
     {
         boot_status = BOOTLOADER_STATUS_JUMP_APP;
         printf("check ok\r\n");
@@ -105,12 +93,6 @@ void App_bootloader_check_data(void)
         printf("check error\r\n");
         NVIC_SystemReset();
     }
-}
-
-// 跳转APP
-void App_bootloader_jump_app(void)
-{
-    Bootloader_jump_to_app();
 }
 
 void App_bootloader(void)
@@ -148,5 +130,77 @@ void App_bootloader(void)
 
     default:
         break;
+    }
+}
+
+/**
+ * 检查更新标志
+ */
+void App_Bootloader_CheckUpdate(void)
+{
+    uint16_t update_flag = 0;
+    uint8_t is_soft_reset = 0;
+    // 首先判断是不是冷启动
+    // 通过判断软件复位标志位是否被置1
+    if (__HAL_RCC_GET_FLAG(RCC_FLAG_SFTRST) != RESET)
+    {
+        is_soft_reset = 1;
+    }
+
+    // 读取BKP寄存器获取标志位
+    update_flag = BKP_ReadFlag();
+
+    if (boot_update_status == BOOTLOADER_RESET)
+    {
+        printf("Strat reset..\r\n");
+    }
+    else
+    {
+        if (is_soft_reset)
+        {
+            if (update_flag == UPDATE_FLAG_MAGIC)
+            {
+                printf("Start updating...\r\n");
+                boot_update_status = BOOTLOADER_UPDATE;
+                BKP_WriteFlag(0x0000);
+                __HAL_RCC_CLEAR_RESET_FLAGS(); // 清除复位标志位,防止意外重启再次进入
+            }
+            else
+            {
+                printf("Invaild flag, jump to app...\r\n");
+                // boot_update_status = BOOTLOADER_NO_UPDATE;
+                //  BKP_WriteFlag(UPDATE_FLAG_MAGIC);
+                //  NVIC_SystemReset();
+            }
+        }
+        else
+        {
+            printf("Cold boot, jump to app...\r\n");
+            // boot_update_status = BOOTLOADER_NO_UPDATE;
+            //  BKP_WriteFlag(UPDATE_FLAG_MAGIC);
+            //  BKP_WriteFlag(0x0000);
+            //  NVIC_SystemReset();
+        }
+    }
+    App_bootloader_jump_app();
+}
+
+void App_bootloader_CheckReset(void)
+{
+    HAL_Delay(3000);
+}
+
+// 跳转APP
+void App_bootloader_jump_app(void)
+{
+    if (boot_update_status == BOOTLOADER_RESET)
+    {
+        // 跳转到初始化程序
+        Bootloader_jump_to_app(RESET_START_ADDR);
+    }
+    else
+    {
+        // 跳转到APP程序
+        Bootloader_jump_to_app(APP_START_ADDR);
     }
 }

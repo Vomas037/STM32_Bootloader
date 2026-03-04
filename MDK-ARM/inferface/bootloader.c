@@ -120,13 +120,13 @@ void Bootloader_rx_app_init(void)
  * 跳转到APP
  */
 
-uint8_t Bootloader_jump_to_app(void)
+uint8_t Bootloader_jump_to_app(uint32_t start_addr)
 {
     typedef void (*pFunc)(void);
 
     // 1.校验
-    uint32_t app_stack_ptr = *(volatile uint32_t *)(APP_START_ADDR);
-    uint32_t app_reset_handle = *(volatile uint32_t *)(APP_START_ADDR + 4);
+    uint32_t app_stack_ptr = *(volatile uint32_t *)(start_addr);
+    uint32_t app_reset_handle = *(volatile uint32_t *)(start_addr + 4);
 
     // 1.校验栈顶地址
     if ((app_stack_ptr & 0xFFFF0000) != STACK_ADDR)
@@ -136,7 +136,7 @@ uint8_t Bootloader_jump_to_app(void)
     }
 
     // 2.校验复位中断地址
-    if (app_reset_handle < APP_START_ADDR || app_reset_handle > APP_END_ADDR)
+    if (app_reset_handle < start_addr || app_reset_handle > APP_END_ADDR)
     {
         printf("reset handle error\n");
         return 1;
@@ -160,7 +160,7 @@ uint8_t Bootloader_jump_to_app(void)
     __set_MSP(app_stack_ptr);
 
     // 重定向中断向量表
-    SCB->VTOR = APP_START_ADDR;
+    SCB->VTOR = start_addr;
 
     // 跳转到APP复位中断
     pFunc jump_to_app = (pFunc)app_reset_handle;

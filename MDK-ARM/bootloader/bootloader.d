@@ -27,6 +27,9 @@ bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_corte
 bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
 bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc.h
+bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rtc_ex.h
+bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_spi.h
 bootloader\bootloader.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 bootloader\bootloader.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 bootloader\bootloader.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
